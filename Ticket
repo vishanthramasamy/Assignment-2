@@ -1,0 +1,46 @@
+class TicketBooking {
+    private int tickets = 1; // only one ticket available
+
+    // synchronized method to prevent overbooking
+    public synchronized void bookTicket(String customerName) {
+        if (tickets > 0) {
+            System.out.println(customerName + " is booking the ticket...");
+            try {
+                Thread.sleep(1000); // simulate some delay in booking
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrupted!");
+            }
+            tickets--; // reduce ticket count
+            System.out.println(customerName + " successfully booked the ticket.");
+        } else {
+            System.out.println(customerName + " sorry, ticket already booked!");
+        }
+    }
+}
+
+// Thread class for customer booking
+class CustomerThread extends Thread {
+    private TicketBooking booking;
+    private String customerName;
+
+    public CustomerThread(TicketBooking booking, String customerName) {
+        this.booking = booking;
+        this.customerName = customerName;
+    }
+
+    public void run() {
+        booking.bookTicket(customerName);
+    }
+}
+
+public class BookingSystem {
+    public static void main(String[] args) {
+        TicketBooking booking = new TicketBooking();
+
+        CustomerThread t1 = new CustomerThread(booking, "Customer 1");
+        CustomerThread t2 = new CustomerThread(booking, "Customer 2");
+
+        t1.start();
+        t2.start();
+    }
+}
